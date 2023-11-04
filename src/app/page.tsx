@@ -5,14 +5,18 @@ import한 컴포넌트들도 클라이언트 컴포넌트가 된다. (하위 컴
 이럴경우 클라이언트/서버 컴포넌트 나누는 의미가 없어짐
 */
 
-import Button from './components/button';
-import Post from './components/post';
+import TestButton from '@/components/testButton';
+import { Button } from '../components/button';
+import Post from '../components/post';
 
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center gap-y-5 p-24'>
       <h1>Home Page</h1>
-      <Button />
+      {/* <Button>Enter</Button> */}
+      <TestButton color='secondary' variant='contained'>
+        Enter
+      </TestButton>
       <Post />
     </main>
   );
