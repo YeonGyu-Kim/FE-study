@@ -8,6 +8,7 @@ import한 컴포넌트들도 클라이언트 컴포넌트가 된다. (하위 컴
 import TestButton from '@/components/testButton';
 import { Button } from '../components/button';
 import Post from '../components/post';
+import Basic from '@/components/basic';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         Enter
       </TestButton>
       <Post />
+      <Basic />
     </main>
   );
 }
