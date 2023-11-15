@@ -4,8 +4,36 @@
 상황에 따라 서버 컴포넌트로 사용할 수 있다.
 */
 
+'use client';
+
 import { z } from 'zod';
 import { Range } from 'react-date-range';
+import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const signUpSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(5, '비밀번호는 최소 5자리 입니다'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: '비밀번호가 같아야 합니다.',
+    path: ['confrimPassword'],
+  });
+
+type SignupSchema = z.infer<typeof signUpSchema>;
 
 export default function Post() {
   /* 
@@ -15,5 +43,33 @@ export default function Post() {
   vh 종류로는 svh (Short Viewport Height),  lvh (Large Viewport Height), dvh (Dynamic Viewport Height)가 있다.
   해당 브라우저의 viewport에 맞게 설정해 주려면 dvh를 사용해주면 된다. (너비인 vw도 동일하게 사용 가능)
   */
-  return <article className='h-[100dvh]'>Post Content</article>;
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    reset,
+    getValues,
+  } = useForm<SignupSchema>({
+    resolver: zodResolver(signUpSchema),
+  });
+
+  const onSubmit = (data: unknown) => {
+    console.log(data);
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('email')} type='email' placeholder='Email' />
+      <input {...register('password')} type='password' placeholder='Password' />
+      {errors.password && <div>{errors.password.message}</div>}
+      <input
+        {...register('confirmPassword')}
+        type='password'
+        placeholder='ConfirmPassword'
+      />
+      <button type='submit'>제출</button>
+    </form>
+  );
 }
