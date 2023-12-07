@@ -29,16 +29,17 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/esm/locale';
 import { useState } from 'react';
 
-const signUpSchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(5, '비밀번호는 최소 5자리 입니다'),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: '비밀번호가 같아야 합니다.',
-    path: ['confrimPassword'],
-  });
+const signUpSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(5, '비밀번호는 최소 5자리 입니다'),
+  confirmPassword: z.string(),
+  coNum: z.string(),
+  position: z.string(),
+});
+const organSchema = z.object({
+  coNum: z.string(),
+  position: z.string(),
+});
 
 const formSchema = z
   .object({
@@ -60,7 +61,17 @@ const formSchema = z
     path: ['confirmPassword'],
   });
 
-type SignupSchema = z.infer<typeof signUpSchema>;
+type SignupSchema = z.infer<typeof signUpSchema> & z.infer<typeof organSchema>;
+
+const OrgamSchema = signUpSchema.merge(organSchema.partial());
+
+const FullSchema = OrgamSchema.refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    message: '비밀번호가 같아야 합니다.',
+    path: ['confrimPassword'],
+  }
+);
 
 export default function Post() {
   /* 
@@ -88,7 +99,7 @@ export default function Post() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = (data: z.infer<typeof FullSchema>) => {
     console.log(data);
   };
 
@@ -107,19 +118,48 @@ export default function Post() {
     },
   });
 
+  const email = watch('email');
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
+  const coNum = watch('coNum');
+  const position = watch('position');
+
   return (
-    /*  <form onSubmit={handleSubmit(onSubmit)}>
-      <input {...register('email')} type='email' placeholder='Email' />
-      <input {...register('password')} type='password' placeholder='Password' />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input
+        {...register('email')}
+        type='email'
+        placeholder='Email'
+        value={email}
+      />
+      <input
+        {...register('password')}
+        type='password'
+        placeholder='Password'
+        value={password}
+      />
       {errors.password && <div>{errors.password.message}</div>}
       <input
         {...register('confirmPassword')}
         type='password'
         placeholder='ConfirmPassword'
+        value={confirmPassword}
+      />
+      <input
+        {...register('coNum')}
+        type='text'
+        placeholder='coNum'
+        value={coNum}
+      />
+      <input
+        {...register('position')}
+        type='text'
+        placeholder='Position'
+        value={position}
       />
       <button type='submit'>제출</button>
-    </form> */
-    <Form {...form}>
+    </form>
+    /*     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
         <FormField
           control={form.control}
@@ -210,7 +250,7 @@ export default function Post() {
             </FormItem>
           )}
         />
-        {/*  <FormField
+       <FormField
           control={form.control}
           name='dates'
           render={({ field }) => (
@@ -253,9 +293,9 @@ export default function Post() {
               </Popover>
             </FormItem>
           )}
-        /> */}
+        /> 
         <Button type='submit'>Submit</Button>
       </form>
-    </Form>
+    </Form> */
   );
 }
