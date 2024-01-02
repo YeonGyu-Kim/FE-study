@@ -9,6 +9,7 @@ import TestButton from '@/components/testButton';
 import { Button } from '../components/button';
 import Post from '../components/post';
 import Basic from '@/components/basic';
+import TabsDemo from '@/components/ui/tab';
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       </TestButton>
       <Post />
       <Basic />
+      <TabsDemo />
     </main>
   );
 }
